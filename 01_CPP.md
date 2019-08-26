@@ -14,3 +14,25 @@
 - **STL。**STL 是个 template 程序库，看名称也知道，但它是非常特殊的一个。它对容器（containers）、迭代器（iterators）、算法（algorithms）以及函数对象（function objects）的规约有极佳的紧密配合与协调，然而 templates 及程序库也可以用其他想法建置出来。STL 有自己特殊的办事方式，当你伙同 STL 一起工作，你必须遵守它的规约。
 
 记住这四个次语言，当你从某个次语言切换到另一个，导致高效编程守则要求你改变策略时，不要感到惊讶。例如对内置类型（即 C-like）而言 **pass-by-value** 通常比 **pass-by-reference** 高效；但当你从 C part of C++ 移往 Object-Oriented C++，由于用户自定义构造函数和析构函数的存在，**pass-by-reference-to-const** 往往更好。运用 Template C++ 时尤其如此，因为彼时你甚至不知道所处理的对象的类型。然而一旦跨入 STL 你就会了解，迭代器和函数对象都是在 C 指针之上塑造出来的，所以对 STL 的迭代器和函数对象而言，旧式的 **pass-by-value** 守则再次使用。
+
+# 5. 了解 C++ 默认编写并调用哪些函数
+
+什么时候 empty class（空类）不再是个 empty class 呢？即：**当 C++ 处理过它之后**。是的，如果你自己没声明，编译器就会为它声明一个**拷贝构造函数**（copy constructor），一个**赋值操作符**（copy assignment operator）和一个**析构函数**（destructor）。此外如果你没有声明任何构造函数，编译器也会为你声明一个**默认构造函数**（default constructor）。所有的这些函数都是 public 且 inline 的。因此，如果你写下：
+
+```c++
+class Empty {};
+```
+
+这就好像你写下这样的代码：
+
+```c++
+class Empty {
+  public:
+    Empty() { ... }									// default 构造函数
+    Empty(const Empty &rhs) { ... }					// copy 构造函数
+    ~Empty() { ... }								// 析构函数
+    
+    Empty &operator=(const Empty &rhs) { ... }		// copy assignment 操作符
+};
+```
+
